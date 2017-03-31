@@ -1,0 +1,26 @@
+Weather {
+  type: 'daily',
+  values:
+   { coord: { lon: 4.85, lat: 45.75 },
+     weather: [ [Object] ],
+     base: 'stations',
+     main:
+      { temp: 292.14,
+        pressure: 1016,
+        humidity: 34,
+        temp_min: 291.15,
+        temp_max: 293.15 },
+     visibility: 10000,
+     wind: { speed: 7.2, deg: 200 },
+     clouds: { all: 0 },
+     dt: 1490976000,
+     sys:
+      { type: 1,
+        id: 5576,
+        message: 0.6222,
+        country: 'FR',
+        sunrise: 1490937674,
+        sunset: 1490983715 },
+     id: 2996944,
+     name: 'Lyon',
+     cod: 200 } }
