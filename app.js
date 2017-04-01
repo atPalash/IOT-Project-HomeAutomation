@@ -73,27 +73,44 @@ function currentWeather() {
                 io.sockets.emit('humidity_port', humidity);
             }
         });
-    },5000);
+    },6000);
 }
 
 currentWeather();
 
-/*-----------for forecast
-weather.forecast("Tampere",function(err, aData){
-    if(err) console.log(err);
-    else
-    {
-        console.log(JSON.stringify(aData));
+function forecastWeather() {
+    setInterval(function () {
+        weather.forecast("Tampere", function (err, forecastData) {
+            if (err) console.log(err);
+            else {
+                var date = new Date();
+                var today = date.getDay();
+                var tommorrow = today+1;
+                var dayAfterTommorrow = today+2;
 
-        var tempCelsius = aData.values.main.temp-273.15;
-        var humidity = aData.values.main.humidity;
+                if(today == 6){
+                    tommorrow = 0;
+                    dayAfterTommorrow = 1;
+                }
+                if(today == 5){
+                    tommorrow = 6;
+                    dayAfterTommorrow = 0;
+                }
+                var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+                var sendDays = [days[today], days[tommorrow], days[dayAfterTommorrow]];
 
-        console.log("the temperature is", tempCelsius,"*C");
-        console.log("the humidity ", humidity);
-    }
+                var forecastWeatherJSON = [];
+                for(var i=0; i<3; i++)
+                {
+                    forecastWeatherJSON[i] = {"forecast":forecastData.values.list[i].weather[0].description, "day" : sendDays[i]};
+                }
+                io.sockets.emit('forecast_port', forecastWeatherJSON);
+            }
+        });
+    },6000);
+}
+forecastWeather();
 
-});
-----------------------------*/
 function currentNews() {
     setInterval(function () {
         iGoogleNewsRSSScraper.getGoogleNewsRSSScraperData({newsType: 'TOPIC', newsTypeTerms: 'WORLD'}, function (data) {
@@ -110,7 +127,7 @@ function currentNews() {
                 console.log('Some error occured.');
             }
         });
-    }, 5000);
+    },6000);
 }
 
 currentNews();
