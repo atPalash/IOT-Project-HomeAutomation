@@ -79,8 +79,8 @@
       <div class="row">
         <div class="col-md-3">
           <div class="row">
-          <p class = "intro-body" style="font-size:200%; text-align:left;">Today's Data
-            <span style="font-size:30%">Created by Arduino</span></p>
+            <p class = "intro-body" style="font-size:200%; text-align:left;">Today's Data
+              <span style="font-size:30%">Created by Arduino</span></p>
           </div>
           <div class="row">
             <p class="intro-body" style="font-size:120%;">Current Room Temperature: {{data}}*C</p>
@@ -104,12 +104,19 @@
         <div class="col-md-6">
           <p class = "intro-body" style="font-size:200%; text-align:left;">Today's Headlines
             <span style="font-size:30%">Created by Google News</span></p>
-              <li style="text-align:left;" ng-repeat="new in news">
-                {{ new.news }}
-              </li>
+          <li style="text-align:left;" ng-repeat="new in news">
+            {{ new.news }}
+          </li>
           <a href="#about" class="btn btn-circle page-scroll">
             <i class="fa fa-angle-double-down animated"></i>
           </a>
+        </div>
+        <div class="col-md-3">
+          <p class = "intro-body" style="font-size:200%; text-align:left;">Calender
+            <span style="font-size:30%">Created by Google Calender</span></p>
+            <li style="text-align:left;" ng-repeat="new in calender">
+              {{ new.event }} on {{new.date}}
+            </li>
         </div>
       </div>
     </div>
@@ -186,6 +193,13 @@
             $scope.$apply(function(){
                 $scope.data = port;
                 console.log(port);
+            });
+        });
+        socket.on('cal_port', function(calenderData){
+            $scope.$apply(function(){
+                $scope.calender = calenderData;
+                //$scope.calenderData = calenderData;
+                //console.log(port);
             });
         });
         socket.on('temperature_port', function(temperature_port) {

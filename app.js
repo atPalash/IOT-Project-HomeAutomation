@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var weather = require("openweather-node");
 var iGoogleNewsRSSScraper = require('googlenews-rss-scraper');
+var ical = require('ical');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -32,6 +33,46 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 
+var ical = require('ical');
+var localICS = ical.parseFile('basic.ics');
+var summary = "";
+var eventDateString = "";
+var eventDate = "";
+var calenderData = [];
+var counter = 0;
+var currentDate = "";
+var dateNow = new Date();
+
+for (var k in localICS){
+    if (localICS.hasOwnProperty(k)) {
+        var ev = localICS[k];
+        eventDate = new Date(JSON.parse(JSON.stringify(ev.start))).getTime();
+        currentDate = dateNow.getTime();
+        //console.log(eventDate);
+        if(eventDate>currentDate){
+            summary = ev.summary;
+            eventDateString = ev.start.toString().substring(0,15);
+            calenderData[counter] = {"event": summary, "date": eventDateString, "eventTime":eventDate};
+            counter++;
+        }
+    }
+}
+
+for(var i=0;i<calenderData.length;i++){
+    for(var j=0;j<calenderData.length;j++){
+        if(calenderData[i].eventTime < calenderData[j].eventTime){
+            var temp = calenderData[j];
+            calenderData[j] = calenderData[i];
+            calenderData[i] = temp;
+        }
+    }
+}
+
+var sendCalender = [];
+for(i=0;i<5;i++){
+    sendCalender[i] = calenderData[i];
+}
+
 var myPort = new serialport("COM3", {
     baudrate: 9600,
     parser: serialport.parsers.readline("\n")
@@ -51,6 +92,9 @@ function onData(data) {
     console.log(data);
 }
 
+
+//io.sockets.emit('my_port', 'hi');
+
 weather.setAPPID("eff90048d596e6b496a3bd92d23e219e");
 weather.setCulture("en");
 weather.setForecastType("daily");
@@ -69,8 +113,8 @@ function currentWeather() {
                 console.log("the humidity ", humidity);
 
                 io.sockets.emit('temperature_port', tempCelsius);
-                //console.log(tempCelsius);
                 io.sockets.emit('humidity_port', humidity);
+                io.sockets.emit('cal_port', sendCalender);
             }
         });
     },6000);
@@ -134,20 +178,20 @@ currentNews();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 server.listen(port, hostname, function(){
