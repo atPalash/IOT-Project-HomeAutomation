@@ -1,6 +1,6 @@
 # IOT-Project-HomeAutomation
 PRESENT STATUS
-This project is based on application of NODE.JS and angularJS for development of web Automation system. The server side is based on NOdejs and the 
+This project is based on application of Node.JS and angularJS for development of web Automation system. The server side is based on Nodejs and the 
 client side is controlled by angular js. Presently it show weather data, weather forecast, google news feeds and google Calender. here also the
 room temperature is sensed by an temperature sensor which is processed by an Arduino board and sent to the USB port of computer. on receiving 
 the temperature it is shown to the client utilising the two way data binding of angular js.
